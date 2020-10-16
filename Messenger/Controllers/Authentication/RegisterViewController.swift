@@ -20,7 +20,7 @@ class RegisterViewController: UIViewController {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(didTapChangeProfilePic), for: .touchUpInside)
         let largeConfig = UIImage.SymbolConfiguration(pointSize: 150, weight: .medium, scale: .large)
-        let largeBoldDoc = UIImage(systemName: "person", withConfiguration: largeConfig)
+        let largeBoldDoc = UIImage(systemName: "person.circle", withConfiguration: largeConfig)
         button.tintColor = .gray
         button.clipsToBounds = true
         button.setImage(largeBoldDoc, for: .normal)
@@ -94,7 +94,7 @@ class RegisterViewController: UIViewController {
     }()
     
     private let registerButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.setTitle("Register", for: .normal)
         button.backgroundColor = .systemGreen
         button.setTitleColor(.white, for: .normal)
@@ -190,24 +190,38 @@ class RegisterViewController: UIViewController {
         
         //Firebase Log in
         
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-            guard let result = authResult, error == nil else {
-                print("Error creating user")
+        DatabaseManager.shared.userExists(with: email) { [weak self] exists in
+            guard let strongSelf = self else { return }
+            guard !exists else {
+                // user already exists
+                self?.alertUserLoginError(message: "Looks like a user account for that email address already exists.")
                 return
             }
             
-            let user = result.user
-            print("Created User: \(user)")
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+                guard authResult != nil, error == nil else {
+                    print("Error creating user")
+                    return
+                }
+                
+                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName,
+                                                                    lastName: lastName,
+                                                                    emailAddress: email))
+                
+                strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+            }
         }
+        
+
     }
     
     @objc private func didTapChangeProfilePic() {
         presentPhotoActionSheet()
     }
     
-    private func alertUserLoginError() {
+    private func alertUserLoginError(message: String = "Please enter all information to create a new account.") {
         let alert = UIAlertController(title: "Woops",
-                                      message: "Please enter all information to create a new account.",
+                                      message: message,
                                       preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         present(alert, animated: true)
