@@ -19,16 +19,15 @@ class RegisterViewController: UIViewController {
         return scrollView
     }()
     
-    private let imageView: UIButton = {
-        let button = UIButton(type: .system)
-        button.addTarget(self, action: #selector(didTapChangeProfilePic), for: .touchUpInside)
-        let largeConfig = UIImage.SymbolConfiguration(pointSize: 150, weight: .medium, scale: .large)
-        let largeBoldDoc = UIImage(systemName: "person.circle", withConfiguration: largeConfig)
-        button.tintColor = .gray
-        button.clipsToBounds = true
-        button.setImage(largeBoldDoc, for: .normal)
-
-        return button
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "person.circle")
+        imageView.tintColor = .gray
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 2
+        imageView.layer.borderColor = UIColor.lightGray.cgColor
+        return imageView
     }()
     
     private let firstNameField: UITextField = {
@@ -111,12 +110,15 @@ class RegisterViewController: UIViewController {
         super.viewDidLoad()
         title = "Log In"
         view.backgroundColor = .systemBackground
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
                                                             style: .done,
                                                             target: self,
                                                             action: #selector(didTapRegister))
         
-        registerButton.addTarget(self, action: #selector(registerButtonTapped), for: .touchUpInside)
+        registerButton.addTarget(self,
+                                 action: #selector(registerButtonTapped),
+                                 for: .touchUpInside)
         
         emailField.delegate = self
         passwordField.delegate = self
@@ -130,7 +132,12 @@ class RegisterViewController: UIViewController {
         scrollView.addSubview(passwordField)
         scrollView.addSubview(registerButton)
         
+        imageView.isUserInteractionEnabled = true
         scrollView.isUserInteractionEnabled = true
+        
+        let gesture = UITapGestureRecognizer(target: self,
+                                             action: #selector(didTapChangeProfilePic))
+        imageView.addGestureRecognizer(gesture)
     }
     
     override func viewDidLayoutSubviews() {
@@ -203,7 +210,7 @@ class RegisterViewController: UIViewController {
             }
             guard !exists else {
                 // user already exists
-                self?.alertUserLoginError(message: "Looks like a user account for that email address already exists.")
+                strongSelf.alertUserLoginError(message: "Looks like a user account for that email address already exists.")
                 return
             }
             
@@ -213,9 +220,33 @@ class RegisterViewController: UIViewController {
                     return
                 }
                 
-                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName,
-                                                                    lastName: lastName,
-                                                                    emailAddress: email))
+                UserDefaults.standard.setValue(email, forKey: "email")
+                UserDefaults.standard.setValue("\(firstName) \(lastName)", forKey: "name")
+                
+                let chatUser = ChatAppUser(firstName: firstName,
+                                           lastName: lastName,
+                                           emailAddress: email)
+                
+                DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
+                    if success {
+                        // upload image
+                        guard let image = strongSelf.imageView.image,
+                              let data = image.pngData() else {
+                            return
+                        }
+                        
+                        let fileName = chatUser.profilePictureFileName
+                        StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName, completion: { result in
+                            switch result {
+                            case .success(let downloadUrl):
+                                UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                print(downloadUrl)
+                            case .failure(let error):
+                                print("Storage manager error: \(error)")
+                            }
+                        })
+                    }
+                })
                 
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             }
@@ -297,14 +328,12 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        print(info)
-        guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
-        imageView.setImage(selectedImage.withRenderingMode(.alwaysOriginal), for: .normal)
-        imageView.layer.borderColor = UIColor.lightGray.cgColor
-        imageView.layer.borderWidth = 2
-        imageView.layer.cornerRadius = (scrollView.width / 3) / 2
-        imageView.imageView?.contentMode = .scaleAspectFill
-        dismiss(animated: true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
+        guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
+            return
+        }
+
+        self.imageView.image = selectedImage
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

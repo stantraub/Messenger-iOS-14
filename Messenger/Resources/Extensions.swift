@@ -243,6 +243,9 @@ extension UIViewController {
     }
 }
 
+extension Notification.Name {
+    static let didLoginNotification = Notification.Name("didLogInNotification")
+}
 
     
     
