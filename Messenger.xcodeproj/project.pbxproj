@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		11147114253522710097694E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11147113253522710097694E /* Extensions.swift */; };
 		11713F5E253566D700E1E25F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11713F5D253566D700E1E25F /* GoogleService-Info.plist */; };
+		1181D2D0256C92AE00CA3C9F /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1181D2CF256C92AE00CA3C9F /* ChatViewController.swift */; };
 		11B47BAE25394ADA00B78728 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B47BAD25394ADA00B78728 /* DatabaseManager.swift */; };
 		11DE7AA12535065500180411 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11DE7AA02535065500180411 /* AppDelegate.swift */; };
 		11DE7AA32535065500180411 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11DE7AA22535065500180411 /* SceneDelegate.swift */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		11147113253522710097694E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		11713F5D253566D700E1E25F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1181D2CF256C92AE00CA3C9F /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		11B47BAD25394ADA00B78728 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		11DE7A9D2535065500180411 /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11DE7AA02535065500180411 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				11DE7AC7253508D300180411 /* VideoPlayerViewController.swift */,
 				11DE7ACA253508F100180411 /* NewConversationViewController.swift */,
 				11DE7ACD2535090000180411 /* ProfileViewController.swift */,
+				1181D2CF256C92AE00CA3C9F /* ChatViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 				11DE7A9A2535065500180411 /* Frameworks */,
 				11DE7A9B2535065500180411 /* Resources */,
 				C9E61FF04B962B18EB6E9474 /* [CP] Embed Pods Frameworks */,
+				81B980B48F18DC3B3FCDEE11 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -265,6 +269,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		81B980B48F18DC3B3FCDEE11 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Messenger/Pods-Messenger-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Messenger/Pods-Messenger-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Messenger/Pods-Messenger-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		C9E61FF04B962B18EB6E9474 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -299,6 +320,7 @@
 				11DE7AA12535065500180411 /* AppDelegate.swift in Sources */,
 				11DE7ACE2535090000180411 /* ProfileViewController.swift in Sources */,
 				11DE7AA32535065500180411 /* SceneDelegate.swift in Sources */,
+				1181D2D0256C92AE00CA3C9F /* ChatViewController.swift in Sources */,
 				11DE7AC5253508CB00180411 /* PhotoViewerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
